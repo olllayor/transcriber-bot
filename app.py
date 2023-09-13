@@ -74,7 +74,7 @@ async def handle_audio_video(message: types.Message):
             text_uz = translator.translate(transcribed_text, src='auto', dest='uz').text
 
             # Combine transcribed_text and text_uz
-            combined_text = f"{transcribed_text}\n\n{text_uz}"
+            combined_text = f"{transcribed_text}\n\n🇺🇿: {text_uz}"
 
             # Check if the combined text is too long
             if len(combined_text) > 4096:
