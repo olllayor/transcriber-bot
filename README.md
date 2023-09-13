@@ -28,10 +28,3 @@ pip install -r requirements.txt
 ```
 BOT_TOKEN=<your bot token>
 ```
-
-        file_ext = message.audio.file_name.split('.')[-1].lower()  # Get the actual file extension
-        await message.reply("Audio file is processing...")
-    elif message.video:
-        file_id = message.video.file_id
-        file_ext = message.video.file_name.split('.')[-1].lower()  # Get the actual
-
