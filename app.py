@@ -5,6 +5,7 @@ from aiogram import Bot, Dispatcher, types
 import warnings
 from pydub import AudioSegment
 import whisper
+from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from pydub.exceptions import PydubException
 from googletrans import Translator
 import uuid
@@ -14,20 +15,31 @@ UPLOADS_DIRECTORY = "uploads"
 
 # Ensure the uploads directory exists
 os.makedirs(UPLOADS_DIRECTORY, exist_ok=True)
-
+load_dotenv()
+ADMIN_USER_ID =os.getenv("ADMIN_USER_ID")
 # Function to generate a unique filename
+# Check if ADMIN_USER_ID is empty
+if not ADMIN_USER_ID:
+    raise ValueError("ADMIN_USER_ID is not set in the .env file")
+
+bot = Bot(token=os.getenv("BOT_TOKEN"))
+# Configure the logging
+dp = Dispatcher(bot)
+translator = Translator()
+logging.basicConfig(level=logging.INFO)
+dp.middleware.setup(LoggingMiddleware())
+warnings.filterwarnings('ignore')
+# Initialize the bot
+
+# Handler to send "Bot running" message to the admin
+async def on_start_notify_admin(dp):
+    try:
+        await bot.send_message(chat_id=ADMIN_USER_ID, text="Bot running")
+    except Exception as e:
+        logging.error(f"Error sending message to admin: {e}")
 def generate_unique_filename(file_ext):
     unique_filename = os.path.join(UPLOADS_DIRECTORY, str(uuid.uuid4()) + "." + file_ext)
     return unique_filename
-
-load_dotenv()
-# Configure the logging
-logging.basicConfig(level=logging.INFO)
-warnings.filterwarnings('ignore')
-# Initialize the bot
-bot = Bot(token=os.getenv("BOT_TOKEN"))
-dp = Dispatcher(bot)
-translator = Translator()
 
 @dp.message_handler(commands=["start"])
 async def handle_audio_video(message: types.Message):
@@ -92,4 +104,4 @@ async def handle_audio_video(message: types.Message):
 
 if __name__ == "__main__":
     from aiogram import executor
-    executor.start_polling(dp, skip_updates=True)
+    executor.start_polling(dp, skip_updates=True, on_startup=on_start_notify_admin)
