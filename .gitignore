@@ -129,11 +129,11 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
+uploads/
 # Spyder project settings
 .spyderproject
 .spyproject
-
+test.py
 # Rope project settings
 .ropeproject
 
