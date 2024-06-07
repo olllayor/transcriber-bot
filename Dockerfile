@@ -5,6 +5,10 @@ FROM python:3.11-slim
 WORKDIR /app
 
 COPY requirements.txt .
+
+# Install git before installing dependencies
+RUN apt-get update && apt-get install -y git
+
 RUN pip install -r requirements.txt
 
 # Install ffmpeg
